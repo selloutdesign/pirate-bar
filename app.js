@@ -42,7 +42,7 @@ bartender.prototype.pickOne = function(ingredList){
 
 bartender.prototype.makeDrink = function(pref){
 	var drink = [];
-	if(pref.strong === true){
+	if(pref.strong == true){
 		 drink.push(strongList.pickOne());
 	}
 	if(pref.salty === true){
@@ -90,17 +90,9 @@ var fruityList = new ingredientList(['Slice of orange', 'dash of cassis', 'cherr
 var matt = new bartender();
 var josh = new person();
   // josh.preferences.strong = true;
-console.log(josh.preferences);
+// console.log(josh.preferences);
 matt.makeDrink(josh.preferences);
 
-
-var printList = function(list){
-  for(var i=0; i < list.ingredients.length; i++){
-    $('.output').append(list.ingredients[i] + " ");
-  }
-}
-
-printList(sweetList);
 
 // for(var question in bartender.questions){
 //   $('.questions').append
@@ -114,21 +106,19 @@ printList(sweetList);
 // }
 
 $(document).ready(function() {
+	// Output a question
 	var showQuestion = function(questKey, questVal){
 		var question = $('.templates .question').clone();
 		var questText = question.find('p span');
 		questText.text(questVal);
-		// This doesn't work
-		questText.id = "test"; 
-		var checkBox = question.find('input .quest-box');
-
-		// how to update checkBox name? -- JESSE
-
+		var checkBox = question.find('input');
+		checkBox.attr('name', questKey);
+		// clean way to prepend in order?
 		$('.questions').prepend(question);
 		
 	}
 
-
+	// Iterate thru questions and ouput
 	for(question in matt.questions){
 		showQuestion(question, matt.questions[question])
 	}
@@ -136,10 +126,21 @@ $(document).ready(function() {
 	$('.questions').on('click', '#submit', function(event) {
 		event.preventDefault();
 		/* Act on the event */
-		if($("input[name='strong']:checked")){
-			josh.preferences.strong = true;
+
+		for(question in matt.questions){
+			if( $("input[name='" + question + "']").is(':checked') ){
+			josh.preferences[question] = true;
+			}
 		}
-		matt.makeDrink(josh.preferences);
+
+		var drink = [];
+		drink = matt.makeDrink(josh.preferences);
+		
+		$('.output').html('');
+		$('.output').html('Ingredients: ')
+		for(ingred in drink){
+			$('.output').append(drink[ingred] + ", ");
+		}
 	});
 
 	matt.makeDrink(josh.preferences);
